@@ -13,20 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.litekite.customtabs
+package com.litekite.customtabs.di
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import android.content.Context
+import com.litekite.customtabs.chromium.ChromiumServiceController
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
+ * @author Vignesh S
+ * @version 1.0, 14/04/2021
+ * @since 1.0
  */
-class ExampleUnitTest {
+@Module
+@InstallIn(SingletonComponent::class)
+object AppComponents {
 
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
+    @Singleton
+    @Provides
+    fun provideChromiumServiceController(@ApplicationContext context: Context) =
+        ChromiumServiceController(context)
 }

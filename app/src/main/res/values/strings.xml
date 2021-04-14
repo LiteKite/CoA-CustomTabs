@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-   Copyright 2020 LiteKite Startup. All rights reserved.
+   Copyright 2021 LiteKite Startup. All rights reserved.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,5 +16,7 @@
 -->
 <resources>
     <string name="app_name">CustomTabs</string>
-    <string name="chromium_ready">Chromium is connected and ready!</string>
+    <string name="start_chromium_web">Start chromium web</string>
+    <string name="chromium_not_connected">Not Connected!</string>
+    <string name="chromium_ready">Chromium is ready!</string>
 </resources>

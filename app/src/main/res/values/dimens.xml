@@ -15,10 +15,11 @@
    limitations under the License.
 -->
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="windowBackground">@color/white</color>
-    <color name="colorAccent">#03DAC5</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
+
+    <dimen name="button_start_chromium_margin_top">40dp</dimen>
+    <dimen name="button_start_chromium_padding">20dp</dimen>
+    <dimen name="button_start_chromium_size">24sp</dimen>
+
+    <dimen name="tv_chromium_web_service_status_size">24sp</dimen>
+
 </resources>

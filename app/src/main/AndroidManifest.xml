@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-   Copyright 2020 LiteKite Startup. All rights reserved.
+   Copyright 2021 LiteKite Startup. All rights reserved.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,15 +17,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.litekite.customtabs">
 
+    <!-- Permission required for bank service. -->
+    <permission
+        android:name="com.litekite.customtabs.permission.CustomTabsActionsReceiver"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.litekite.customtabs.permission.CustomTabsActionsReceiver" />
+
     <application
-        android:allowBackup="true"
+        android:name=".app.ClientApp"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,8 +42,9 @@
         </activity>
 
         <receiver
-            android:name=".ChromiumServiceController$CustomTabsActionsReceiver"
-            android:exported="true" />
+            android:name=".chromium.ChromiumServiceController$CustomTabsActionsReceiver"
+            android:exported="true"
+            android:permission="com.litekite.customtabs.permission.CustomTabsActionsReceiver" />
 
     </application>
 

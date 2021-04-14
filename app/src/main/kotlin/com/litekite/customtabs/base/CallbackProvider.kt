@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.litekite.customtabs
-
-import org.junit.Assert.assertEquals
-import org.junit.Test
+package com.litekite.customtabs.base
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
+ * @author Vignesh S
+ * @version 1.0, 31/08/2020
+ * @since 1.0
  */
-class ExampleUnitTest {
+interface CallbackProvider<T> {
 
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    val callbacks: ArrayList<T>
+
+    fun addCallback(cb: T) {
+        callbacks.add(cb)
+    }
+
+    fun removeCallback(cb: T) {
+        callbacks.remove(cb)
     }
 }

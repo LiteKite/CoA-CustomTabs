@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-   Copyright 2020 LiteKite Startup. All rights reserved.
+   Copyright 2021 LiteKite Startup. All rights reserved.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,39 +14,56 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".main.MainActivity">
 
-    <TextView
-        android:id="@+id/tv_chromium_web_service_status"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Not Connected!"
-        android:textAlignment="center"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4" />
+    <data>
 
-    <Button
-        android:id="@+id/b_launch_web"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:textSize="30sp"
-        android:visibility="visible"
-        android:text="launch web"
-        app:layout_constraintEnd_toEndOf="@+id/tv_chromium_web_service_status"
-        app:layout_constraintStart_toStartOf="@+id/tv_chromium_web_service_status"
-        app:layout_constraintTop_toBottomOf="@+id/tv_chromium_web_service_status" />
+        <variable
+            name="presenter"
+            type="com.litekite.customtabs.main.MainVM" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_chromium_web_service_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@={presenter.chromiumStatus, default=@string/chromium_not_connected}"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/tv_chromium_web_service_status_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.4" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/b_start_chromium_web"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/button_start_chromium_margin_top"
+            android:enabled="false"
+            android:onClick="@{(view) -> presenter.onClick(view)}"
+            android:padding="@dimen/button_start_chromium_padding"
+            android:text="@string/start_chromium_web"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/button_start_chromium_size"
+            app:layout_constraintEnd_toEndOf="@+id/tv_chromium_web_service_status"
+            app:layout_constraintStart_toStartOf="@+id/tv_chromium_web_service_status"
+            app:layout_constraintTop_toBottomOf="@+id/tv_chromium_web_service_status" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
