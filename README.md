@@ -2,6 +2,24 @@
 
 An Android App Sample that uses Chromium Custom Tabs
 
+<br/>
+
+<p>
+  <img src="https://github.com/LiteKite/CoA-CustomTabs/blob/assets/assets/custom_tabs.gif" alt="Custom Tabs" width="30%" />
+</p>
+
+## Getting Started
+
+1) Add the dependency in your app build.gradle:
+
+~~~
+dependencies {
+  implementation 'androidx.browser:browser:<version-tag>'
+}
+~~~
+
+2) Connect with ChromiumServiceController for in-app browsing with chrome or chromium browsers.
+
 ## License
 
 ~~~
