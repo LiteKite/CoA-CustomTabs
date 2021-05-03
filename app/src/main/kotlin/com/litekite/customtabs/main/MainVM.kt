@@ -21,13 +21,14 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import com.litekite.customtabs.R
 import com.litekite.customtabs.app.ClientApp
 import com.litekite.customtabs.chromium.ChromiumServiceController
 import com.litekite.customtabs.util.ContextUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 /**
@@ -44,7 +45,8 @@ class MainVM @Inject constructor(
     ChromiumServiceController.ChromiumServiceCallback {
 
     val chromiumStatus: ObservableField<String> = ObservableField()
-    val chromiumReady: MutableLiveData<Boolean> = MutableLiveData()
+    private val _chromiumReady: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val chromiumReady: StateFlow<Boolean> = _chromiumReady
     private val applicationContext = getApplication() as ClientApp
 
     init {
@@ -65,7 +67,7 @@ class MainVM @Inject constructor(
 
     override fun onChromiumWebReady() {
         chromiumStatus.set(applicationContext.getString(R.string.chromium_ready))
-        chromiumReady.value = true
+        _chromiumReady.value = true
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)

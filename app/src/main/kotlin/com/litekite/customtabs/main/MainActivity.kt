@@ -19,11 +19,13 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.litekite.customtabs.R
-import com.litekite.customtabs.chromium.ChromiumServiceController
 import com.litekite.customtabs.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /**
  * @author Vignesh S
@@ -33,11 +35,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private var uiWork: Job? = null
     private lateinit var binding: ActivityMainBinding
     private val mainVM: MainVM by viewModels()
-
-    @Inject
-    lateinit var chromiumServiceController: ChromiumServiceController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,13 +48,21 @@ class MainActivity : AppCompatActivity() {
     private fun init() {
         binding.presenter = mainVM
         lifecycle.addObserver(mainVM)
-        mainVM.chromiumReady.observe(
-            this,
-            { isReady ->
+    }
+
+    override fun onStart() {
+        super.onStart()
+        uiWork = lifecycleScope.launch {
+            mainVM.chromiumReady.collect { isReady ->
                 if (isReady) {
                     binding.bStartChromiumWeb.isEnabled = true
                 }
             }
-        )
+        }
+    }
+
+    override fun onStop() {
+        uiWork?.cancel()
+        super.onStop()
     }
 }
