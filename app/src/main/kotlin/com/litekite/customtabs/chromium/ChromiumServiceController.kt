@@ -155,7 +155,7 @@ class ChromiumServiceController @Inject constructor(private val context: Context
             context,
             0,
             actionPendingIntent,
-            0
+            PendingIntent.FLAG_IMMUTABLE
         )
         val tabBitmapDrawable =
             ContextCompat.getDrawable(context, R.drawable.ic_add_tab)?.toBitmap()
