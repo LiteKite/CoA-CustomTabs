@@ -32,13 +32,13 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/tv_chromium_web_service_status"
+            android:id="@+id/tv_custom_tabs_service_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@={presenter.chromiumStatus, default=@string/chromium_not_connected}"
+            android:text="@={presenter.customTabsStatus, default=@string/custom_tabs_not_connected}"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="@dimen/tv_chromium_web_service_status_size"
+            android:textSize="@dimen/tv_custom_tabs_service_status_size"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,20 +49,19 @@
             app:layout_constraintVertical_bias="0.4" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/b_start_chromium_web"
+            android:id="@+id/b_start_custom_tabs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/button_start_chromium_margin_top"
-            android:enabled="false"
+            android:layout_marginTop="@dimen/button_start_custom_tabs_margin_top"
             android:onClick="@{(view) -> presenter.onClick(view)}"
-            android:padding="@dimen/button_start_chromium_padding"
-            android:text="@string/start_chromium_web"
+            android:padding="@dimen/button_start_custom_tabs_padding"
+            android:text="@string/start_custom_tabs"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="@dimen/button_start_chromium_size"
-            app:layout_constraintEnd_toEndOf="@+id/tv_chromium_web_service_status"
-            app:layout_constraintStart_toStartOf="@+id/tv_chromium_web_service_status"
-            app:layout_constraintTop_toBottomOf="@+id/tv_chromium_web_service_status" />
+            android:textSize="@dimen/button_start_custom_tabs_size"
+            app:layout_constraintEnd_toEndOf="@+id/tv_custom_tabs_service_status"
+            app:layout_constraintStart_toStartOf="@+id/tv_custom_tabs_service_status"
+            app:layout_constraintTop_toBottomOf="@+id/tv_custom_tabs_service_status" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -13,28 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.litekite.customtabs.di
+package com.litekite.customtabs.customtabs
 
-import android.content.Context
-import com.litekite.customtabs.customtabs.CustomTabsServiceController
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import android.app.Service
+import android.content.Intent
+import android.os.Binder
+import android.os.IBinder
 
 /**
- * @author Vignesh S
- * @version 1.0, 14/04/2021
- * @since 1.0
+ * Empty service used by the custom tab to bind to, raising the application's importance.
  */
-@Module
-@InstallIn(SingletonComponent::class)
-object AppComponents {
+class KeepAliveService : Service() {
 
-    @Singleton
-    @Provides
-    fun provideCustomTabsServiceController(@ApplicationContext context: Context) =
-        CustomTabsServiceController(context)
+    override fun onBind(intent: Intent): IBinder {
+        return Binder()
+    }
 }

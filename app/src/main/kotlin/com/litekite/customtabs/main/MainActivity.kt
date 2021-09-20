@@ -36,12 +36,13 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private var uiWork: Job? = null
-    private lateinit var binding: ActivityMainBinding
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
     private val mainVM: MainVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        _binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         init()
     }
 
@@ -53,9 +54,11 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         uiWork = lifecycleScope.launch {
-            mainVM.chromiumReady.collect { isReady ->
+            mainVM.customTabsReady.collect { isReady ->
                 if (isReady) {
-                    binding.bStartChromiumWeb.isEnabled = true
+                    binding.bStartCustomTabs.setText(R.string.start_custom_tabs)
+                } else {
+                    binding.bStartCustomTabs.setText(R.string.start_web_view)
                 }
             }
         }
@@ -64,5 +67,10 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         uiWork?.cancel()
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }

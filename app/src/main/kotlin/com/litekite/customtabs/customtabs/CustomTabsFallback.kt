@@ -13,28 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.litekite.customtabs.di
+package com.litekite.customtabs.customtabs
 
 import android.content.Context
-import com.litekite.customtabs.customtabs.CustomTabsServiceController
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import android.content.Intent
+import android.net.Uri
+import com.litekite.customtabs.webview.WebViewActivity
 
 /**
- * @author Vignesh S
- * @version 1.0, 14/04/2021
- * @since 1.0
+ * A Fallback that opens a WebView when Custom Tabs is not available
  */
-@Module
-@InstallIn(SingletonComponent::class)
-object AppComponents {
+class CustomTabsFallback : CustomTabsServiceController.Fallback {
 
-    @Singleton
-    @Provides
-    fun provideCustomTabsServiceController(@ApplicationContext context: Context) =
-        CustomTabsServiceController(context)
+    override fun openUri(context: Context, uri: Uri) {
+        val intent = Intent(context, WebViewActivity::class.java)
+        intent.putExtra(WebViewActivity.EXTRA_URL, uri.toString())
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
 }

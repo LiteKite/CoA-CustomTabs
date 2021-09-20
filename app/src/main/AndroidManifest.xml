@@ -17,7 +17,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.litekite.customtabs">
 
-    <!-- Permission required for bank service. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Permission required for CustomTabsActionsReceiver. -->
     <permission
         android:name="com.litekite.customtabs.permission.CustomTabsActionsReceiver"
         android:protectionLevel="signature" />
@@ -42,8 +44,16 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.litekite.customtabs.webview.WebViewActivity"
+            android:parentActivityName=".main.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".main.MainActivity" />
+        </activity>
+
         <receiver
-            android:name=".chromium.ChromiumServiceController$CustomTabsActionsReceiver"
+            android:name="com.litekite.customtabs.customtabs.CustomTabsServiceController$CustomTabsActionsReceiver"
             android:exported="true"
             android:permission="com.litekite.customtabs.permission.CustomTabsActionsReceiver" />
 

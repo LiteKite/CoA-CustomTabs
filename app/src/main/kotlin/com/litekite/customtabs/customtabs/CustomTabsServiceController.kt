@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.litekite.customtabs.chromium
+package com.litekite.customtabs.customtabs
 
 import android.app.Activity
 import android.app.PendingIntent
@@ -42,24 +42,21 @@ import javax.inject.Singleton
  * @author Vignesh S
  * @version 1.0, 08/05/2020
  * @since 1.0
+ *
+ * @see [https://github.com/GoogleChrome/android-browser-helper]
  */
 @Singleton
-class ChromiumServiceController @Inject constructor(private val context: Context) :
-    CallbackProvider<ChromiumServiceController.ChromiumServiceCallback> {
+class CustomTabsServiceController @Inject constructor(private val context: Context) :
+    CallbackProvider<CustomTabsServiceController.CustomTabsServiceCallback> {
 
     companion object {
 
-        const val TAG = "ChromiumServiceController"
+        const val TAG = "CustomTabsServiceController"
 
-        // Package name for the Chrome channel the client wants to connect to. This depends on the
-        // channel name.
-        // Stable = com.android.chrome
-        // Beta = com.chrome.beta
-        // Dev = com.chrome.dev
-        const val CUSTOM_TAB_PACKAGE_NAME = "com.android.chrome" // Change when in stable
+        val SAMPLE_URI: Uri = Uri.parse("https://www.google.com")
     }
 
-    override val callbacks: ArrayList<ChromiumServiceCallback> = ArrayList()
+    override val callbacks: ArrayList<CustomTabsServiceCallback> = ArrayList()
 
     private var customTabsSession: CustomTabsSession? = null
     private lateinit var customTabsClient: CustomTabsClient
@@ -75,7 +72,7 @@ class ChromiumServiceController @Inject constructor(private val context: Context
             val ok = customTabsClient.warmup(0)
             Log.d(TAG, "onCustomTabsServiceConnected: warm up: $ok")
             if (ok) {
-                callbacks.forEach { it.onChromiumWebReady() }
+                callbacks.forEach { it.onCustomTabsReady() }
             }
         }
 
@@ -123,32 +120,39 @@ class ChromiumServiceController @Inject constructor(private val context: Context
     }
 
     init {
-        CustomTabsClient.bindCustomTabsService(context, CUSTOM_TAB_PACKAGE_NAME, connection)
-        Runtime.getRuntime().addShutdownHook(Thread { tearDown() })
+        val packageName = CustomTabsPackageProvider.getPackageNameToUse(context)
+        if (packageName != null && !serviceConnected) {
+            CustomTabsClient.bindCustomTabsService(context, packageName, connection)
+            Runtime.getRuntime().addShutdownHook(Thread { tearDown() })
+        }
     }
 
     fun setActivityContext(activityContext: Activity?) {
         this.activityContext = activityContext
     }
 
-    fun startNewSession() {
-        if (!serviceConnected) return
+    fun startNewSession(uri: Uri, fallback: CustomTabsFallback) {
+        val packageName = CustomTabsPackageProvider.getPackageNameToUse(context)
+        if (packageName == null && !serviceConnected) {
+            fallback.openUri(context, uri)
+            return
+        }
         customTabsSession = customTabsClient.newSession(customTabsCallback)
-        launchCustomTabBrowser()
+        launchCustomTabBrowser(uri)
     }
 
-    private fun launchCustomTabBrowser() {
+    private fun launchCustomTabBrowser(uri: Uri) {
         // Use a CustomTabsIntent.Builder to configure CustomTabsIntent.
         // Once ready, call CustomTabsIntent.Builder.build() to create a CustomTabsIntent
         // and launch the desired Url with CustomTabsIntent.launchUrl()
-        val builder = CustomTabsIntent.Builder()
+        val builder = CustomTabsIntent.Builder(customTabsSession)
         // Changes the background color. colorInt is an int that specifies a Color.
         val params = CustomTabColorSchemeParams.Builder()
             .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
             .setNavigationBarColor(ContextCompat.getColor(context, R.color.colorPrimary))
             .build()
         builder.setColorSchemeParams(CustomTabsIntent.COLOR_SCHEME_LIGHT, params)
-        // This creates an action that is performed when the button pressed on the chromium
+        // This creates an action that is performed when the button pressed on the custom tabs
         // activity.
         val actionPendingIntent = Intent(context, CustomTabsActionsReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
@@ -159,26 +163,25 @@ class ChromiumServiceController @Inject constructor(private val context: Context
         )
         val tabBitmapDrawable =
             ContextCompat.getDrawable(context, R.drawable.ic_add_tab)?.toBitmap()
-        // Adds Action Button to Chromium Activity
+        // Adds action button to custom tabs activity
         tabBitmapDrawable?.let {
             builder.setActionButton(tabBitmapDrawable, "adds tab", pendingIntent, false)
         }
-        // Adds Menu Option Item to Chromium Activity
+        // Adds menu option item to custom tabs activity
         builder.addMenuItem("Add Tab", pendingIntent)
-        customTabsSession?.let { builder.setSession(it) }
-        // CustomTabsIntent is the one that loads your url in a custom tab.
+        // CustomTabsIntent is the one that loads your url in a custom tabs.
         val customTabsIntent = builder.build()
-        val url = "https://google.com"
-        customTabsIntent.intent.`package` = CUSTOM_TAB_PACKAGE_NAME
+        CustomTabsPackageProvider.addKeepAliveExtra(context, customTabsIntent.intent)
+        customTabsIntent.intent.`package` = CustomTabsPackageProvider.getPackageNameToUse(context)
         if (activityContext != null) {
-            customTabsIntent.launchUrl(activityContext as Context, Uri.parse(url))
+            customTabsIntent.launchUrl(activityContext as Context, uri)
         }
     }
 
-    override fun addCallback(cb: ChromiumServiceCallback) {
+    override fun addCallback(cb: CustomTabsServiceCallback) {
         super.addCallback(cb)
         if (serviceConnected) {
-            callbacks.forEach { it.onChromiumWebReady() }
+            callbacks.forEach { it.onCustomTabsReady() }
         }
     }
 
@@ -192,15 +195,27 @@ class ChromiumServiceController @Inject constructor(private val context: Context
     class CustomTabsActionsReceiver : BroadcastReceiver() {
 
         @Inject
-        lateinit var chromiumServiceController: ChromiumServiceController
+        lateinit var customTabsServiceController: CustomTabsServiceController
 
         override fun onReceive(context: Context, intent: Intent?) {
             Log.d(TAG, "customTabsActionsReceiver: onReceive: ${intent?.action}")
-            chromiumServiceController.startNewSession()
+            customTabsServiceController.startNewSession(SAMPLE_URI, CustomTabsFallback())
         }
     }
 
-    interface ChromiumServiceCallback {
-        fun onChromiumWebReady()
+    interface CustomTabsServiceCallback {
+        fun onCustomTabsReady()
+    }
+
+    /**
+     * To be used as a fallback to open the Uri when Custom Tabs is not available.
+     */
+    interface Fallback {
+        /**
+         *
+         * @param context The context that wants to open the Uri.
+         * @param uri The uri to be opened by the fallback.
+         */
+        fun openUri(context: Context, uri: Uri)
     }
 }

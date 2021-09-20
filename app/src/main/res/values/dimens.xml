@@ -16,10 +16,12 @@
 -->
 <resources>
 
-    <dimen name="button_start_chromium_margin_top">40dp</dimen>
-    <dimen name="button_start_chromium_padding">20dp</dimen>
-    <dimen name="button_start_chromium_size">24sp</dimen>
+    <dimen name="button_start_custom_tabs_margin_top">40dp</dimen>
+    <dimen name="button_start_custom_tabs_padding">20dp</dimen>
+    <dimen name="button_start_custom_tabs_size">24sp</dimen>
 
-    <dimen name="tv_chromium_web_service_status_size">24sp</dimen>
+    <dimen name="tv_custom_tabs_service_status_size">24sp</dimen>
+
+    <dimen name="web_view_padding">16dp</dimen>
 
 </resources>

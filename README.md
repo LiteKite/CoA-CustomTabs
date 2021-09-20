@@ -1,6 +1,6 @@
 # CoA-CustomTabs
 
-An Android App Sample that uses Chromium Custom Tabs
+An Android App Sample that uses Chrome Custom Tabs
 
 <br/>
 
@@ -18,7 +18,7 @@ dependencies {
 }
 ~~~
 
-2) Connect with ChromiumServiceController for in-app browsing with chrome or chromium browsers.
+2) Connect with CustomTabsServiceController for in-app browsing with custom tabs supported browsers.
 
 ## License
 

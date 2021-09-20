@@ -14,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<resources>
-    <string name="app_name">CustomTabs</string>
-    <string name="start_custom_tabs">Start Custom Tabs</string>
-    <string name="start_web_view">Start WebView</string>
-    <string name="custom_tabs_not_connected">Not Connected!</string>
-    <string name="custom_tabs_ready">Custom Tabs is Ready!</string>
-</resources>
+<WebView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/web_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/web_view_padding"
+    tools:context=".webview.WebViewActivity" />

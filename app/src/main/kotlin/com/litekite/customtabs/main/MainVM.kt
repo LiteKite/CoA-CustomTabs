@@ -24,8 +24,9 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.litekite.customtabs.R
 import com.litekite.customtabs.app.ClientApp
-import com.litekite.customtabs.chromium.ChromiumServiceController
+import com.litekite.customtabs.customtabs.CustomTabsFallback
 import com.litekite.customtabs.util.ContextUtil
+import com.litekite.customtabs.customtabs.CustomTabsServiceController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,45 +40,48 @@ import javax.inject.Inject
 @HiltViewModel
 class MainVM @Inject constructor(
     application: Application,
-    private val chromiumServiceController: ChromiumServiceController
+    private val customTabsServiceController: CustomTabsServiceController
 ) : AndroidViewModel(application),
     LifecycleObserver,
-    ChromiumServiceController.ChromiumServiceCallback {
+    CustomTabsServiceController.CustomTabsServiceCallback {
 
-    val chromiumStatus: ObservableField<String> = ObservableField()
-    private val _chromiumReady: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val chromiumReady: StateFlow<Boolean> = _chromiumReady
+    val customTabsStatus: ObservableField<String> = ObservableField()
+    private val _customTabsReady: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val customTabsReady: StateFlow<Boolean> = _customTabsReady
     private val applicationContext = getApplication() as ClientApp
 
     init {
-        chromiumStatus.set(applicationContext.getString(R.string.chromium_not_connected))
+        customTabsStatus.set(applicationContext.getString(R.string.custom_tabs_not_connected))
     }
 
     fun onClick(v: View) {
         when (v.id) {
-            R.id.b_start_chromium_web -> {
+            R.id.b_start_custom_tabs -> {
                 val activityContext = ContextUtil.getActivity(v.context)
                 if (activityContext != null) {
-                    chromiumServiceController.setActivityContext(activityContext)
+                    customTabsServiceController.setActivityContext(activityContext)
                 }
-                chromiumServiceController.startNewSession()
+                customTabsServiceController.startNewSession(
+                    CustomTabsServiceController.SAMPLE_URI,
+                    CustomTabsFallback()
+                )
             }
         }
     }
 
-    override fun onChromiumWebReady() {
-        chromiumStatus.set(applicationContext.getString(R.string.chromium_ready))
-        _chromiumReady.value = true
+    override fun onCustomTabsReady() {
+        customTabsStatus.set(applicationContext.getString(R.string.custom_tabs_ready))
+        _customTabsReady.value = true
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
-        chromiumServiceController.addCallback(this)
+        customTabsServiceController.addCallback(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
-        chromiumServiceController.setActivityContext(null)
-        chromiumServiceController.removeCallback(this)
+        customTabsServiceController.setActivityContext(null)
+        customTabsServiceController.removeCallback(this)
     }
 }
