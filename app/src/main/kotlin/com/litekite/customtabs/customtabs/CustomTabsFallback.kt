@@ -17,7 +17,6 @@ package com.litekite.customtabs.customtabs
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import com.litekite.customtabs.webview.WebViewActivity
 
 /**
@@ -25,9 +24,9 @@ import com.litekite.customtabs.webview.WebViewActivity
  */
 class CustomTabsFallback : CustomTabsServiceController.Fallback {
 
-    override fun openUri(context: Context, uri: Uri) {
+    override fun openUrl(context: Context, url: String) {
         val intent = Intent(context, WebViewActivity::class.java)
-        intent.putExtra(WebViewActivity.EXTRA_URL, uri.toString())
+        intent.putExtra(WebViewActivity.EXTRA_URL, url)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }

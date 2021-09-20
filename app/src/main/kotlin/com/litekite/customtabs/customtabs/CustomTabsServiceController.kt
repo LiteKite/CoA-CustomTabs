@@ -24,6 +24,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.webkit.URLUtil
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsCallback
 import androidx.browser.customtabs.CustomTabsClient
@@ -53,7 +54,7 @@ class CustomTabsServiceController @Inject constructor(private val context: Conte
 
         const val TAG = "CustomTabsServiceController"
 
-        val SAMPLE_URI: Uri = Uri.parse("https://www.google.com")
+        const val SAMPLE_URI = "https://www.google.com"
     }
 
     override val callbacks: ArrayList<CustomTabsServiceCallback> = ArrayList()
@@ -131,17 +132,19 @@ class CustomTabsServiceController @Inject constructor(private val context: Conte
         this.activityContext = activityContext
     }
 
-    fun startNewSession(uri: Uri, fallback: CustomTabsFallback) {
+    fun startNewSession(url: String, fallback: CustomTabsFallback) {
         val packageName = CustomTabsPackageProvider.getPackageNameToUse(context)
         if (packageName == null && !serviceConnected) {
-            fallback.openUri(context, uri)
+            fallback.openUrl(context, url)
             return
         }
-        customTabsSession = customTabsClient.newSession(customTabsCallback)
-        launchCustomTabBrowser(uri)
+        if (URLUtil.isNetworkUrl(url)) {
+            customTabsSession = customTabsClient.newSession(customTabsCallback)
+            launchCustomTabBrowser(url)
+        }
     }
 
-    private fun launchCustomTabBrowser(uri: Uri) {
+    private fun launchCustomTabBrowser(url: String) {
         // Use a CustomTabsIntent.Builder to configure CustomTabsIntent.
         // Once ready, call CustomTabsIntent.Builder.build() to create a CustomTabsIntent
         // and launch the desired Url with CustomTabsIntent.launchUrl()
@@ -174,7 +177,7 @@ class CustomTabsServiceController @Inject constructor(private val context: Conte
         CustomTabsPackageProvider.addKeepAliveExtra(context, customTabsIntent.intent)
         customTabsIntent.intent.`package` = CustomTabsPackageProvider.getPackageNameToUse(context)
         if (activityContext != null) {
-            customTabsIntent.launchUrl(activityContext as Context, uri)
+            customTabsIntent.launchUrl(activityContext as Context, Uri.parse(url))
         }
     }
 
@@ -214,8 +217,8 @@ class CustomTabsServiceController @Inject constructor(private val context: Conte
         /**
          *
          * @param context The context that wants to open the Uri.
-         * @param uri The uri to be opened by the fallback.
+         * @param url The url to be opened by the fallback.
          */
-        fun openUri(context: Context, uri: Uri)
+        fun openUrl(context: Context, url: String)
     }
 }
